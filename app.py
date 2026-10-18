@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from investigator import investigate_alert
@@ -16,20 +17,11 @@ app = FastAPI(
 )
 
 AUDIT_FILE = Path(__file__).parent / "audit_log.jsonl"
+FRONTEND_DIST = Path(__file__).parent / "frontend" / "dist"
 
 
 class DecisionRequest(BaseModel):
     approved: bool
-
-
-@app.get("/")
-def home():
-    return {
-        "name": "TraceOps AI",
-        "status": "running",
-        "mode": "synthetic data and simulated responses",
-        "docs": "/docs",
-    }
 
 
 @app.get("/api/investigate/{alert_id}")
@@ -78,12 +70,10 @@ def decision(alert_id: str, request: DecisionRequest):
     if not proposal_result.get("success"):
         raise HTTPException(status_code=404, detail="Alert not found")
 
-    event = record_decision(
+    return record_decision(
         proposal_result,
         approved=request.approved,
     )
-
-    return event
 
 
 @app.get("/api/audit")
@@ -102,3 +92,29 @@ def audit_history():
                     continue
 
     return {"events": events}
+
+
+@app.get("/", include_in_schema=False)
+def home():
+    index_file = FRONTEND_DIST / "index.html"
+
+    if index_file.exists():
+        from fastapi.responses import FileResponse
+        return FileResponse(index_file)
+
+    return {
+        "name": "TraceOps AI",
+        "status": "running",
+        "mode": "synthetic data and simulated responses",
+        "docs": "/docs",
+        "message": "Build the frontend to serve the dashboard.",
+    }
+
+
+# Mount static assets after defining the API routes.
+if FRONTEND_DIST.exists():
+    app.mount(
+        "/",
+        StaticFiles(directory=FRONTEND_DIST),
+        name="frontend",
+    )
