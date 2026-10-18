@@ -4,7 +4,7 @@
 :root {
   font-family: 'DM Sans', sans-serif;
   color: #e7eaf3;
-  background: #0a0d14;
+  background: #080c17;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -18,6 +18,19 @@
 body {
   margin: 0;
   min-width: 320px;
+  background: 
+  radial-gradient(
+    circle at 75% 5%,
+    rgba(77, 64, 160, 0.16),
+    transparent 42%
+  ),
+  radial-gradient(
+    circle at 20% 90%,
+    rgba(77, 64, 160, 0.16),
+    transparent 42%
+  ),
+  #080c17;
+  background-attachment: fixed;
 }
 
 button,
@@ -32,10 +45,6 @@ button {
 button:disabled {
   opacity: 0.55;
   cursor: wait;
-}
-
-.app-shell {
-  min-height: 100vh;
 }
 
 /* Sidebar */
@@ -220,6 +229,24 @@ h1 {
 .metric-card {
   padding: 19px;
   min-width: 0;
+  background: linear-gradient(
+    145deg,
+    rgba(24, 31, 49, 0.96),
+    rgba(13, 18, 30, 0.98),
+  );
+   border: 1px solid #303951;
+  border-radius: 13px;
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.metric-card:hover {
+  transform: translateY(-3px);
+  border-color: #7462b7;
+  box-shadow: 0 8px 28px rgba(107, 82, 200, 0.12);
+
 }
 
 .metric-icon {
@@ -791,5 +818,238 @@ footer {
   .graph-report-summary {
     align-items: flex-start;
     flex-direction: column;
+  }
+}
+
+/* FalkorDB-inspired network background */
+
+
+/* Network background */
+.app-shell {
+  position: relative;
+  isolation: isolate;
+  min-height: 100vh;
+  background: transparent;
+}
+
+.network-background {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      circle at 25% 25%,
+      rgba(99, 102, 241, 0.09),
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at 75% 70%,
+      rgba(139, 92, 246, 0.08),
+      transparent 40%
+    ),
+    #080c17;
+}
+
+.network-background svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.network-edge {
+  stroke: #8175ed;
+  stroke-width: 0.12;
+  stroke-opacity: 0.42;
+}
+
+.network-node {
+  fill: #a78bfa;
+}
+
+.network-node-glow {
+  fill: #8b5cf6;
+  opacity: 0.22;
+}
+
+/* Place the dashboard above the background */
+.sidebar,
+.main-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* Preserve readable, dark dashboard panels */
+.metric-card,
+.panel {
+  background: rgba(17, 22, 34, 0.91);
+}
+
+
+/* Fix the dashboard content position */
+.app-shell {
+  position: relative;
+  min-height: 100vh;
+}
+
+.main-content {
+  position: relative;
+  z-index: 1;
+  margin-left: 245px;
+  margin-top: 0;
+  padding: 28px 42px;
+  box-sizing: border-box;
+  align-self: start;
+}
+
+.topbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  margin-top: 0;
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+.topbar > div {
+  width: 100%;
+}
+
+.topbar h1 {
+  margin: 8px 0;
+}
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 15px;
+  margin-top: 0;
+  margin-bottom: 22px;
+}
+
+@media (max-width: 1100px) {
+  .main-content {
+    padding: 24px 22px;
+  }
+}
+
+@media (max-width: 650px) {
+  .main-content {
+    margin-left: 0;
+    padding: 22px 13px;
+  }
+
+  .topbar {
+    margin-bottom: 24px;
+  }
+
+  .metric-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+
+/* =========================================================
+   FINAL LAYOUT FIX
+   Keep the sidebar fixed and the network behind the content.
+   These rules intentionally override earlier duplicate rules.
+   ========================================================= */
+
+.app-shell {
+  position: relative;
+  isolation: isolate;
+  min-height: 100vh;
+}
+
+/* The sidebar must remain fixed; don't let the network rules move it. */
+.sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: 245px;
+  height: 100vh;
+  z-index: 10;
+}
+
+/* Keep the network decorative and out of normal document flow. */
+.network-background {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Start the dashboard at the top, beside the sidebar. */
+.main-content {
+  position: relative;
+  z-index: 1;
+  margin-left: 245px;
+  margin-top: 0;
+  padding: 28px 42px;
+  max-width: 1600px;
+  box-sizing: border-box;
+}
+
+/* Match the reference: heading, then cards, then investigation panel. */
+.topbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  margin-top: 0;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.topbar > div {
+  width: 100%;
+}
+
+.topbar h1 {
+  margin: 8px 0;
+}
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 15px;
+  margin-top: 0;
+  margin-bottom: 19px;
+}
+
+@media (max-width: 1100px) {
+  .sidebar {
+    width: 205px;
+  }
+
+  .main-content {
+    margin-left: 205px;
+    padding: 24px 22px;
+  }
+
+  .metric-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 650px) {
+  .sidebar {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    height: auto;
+  }
+
+  .main-content {
+    margin-left: 0;
+    padding: 22px 13px;
+  }
+
+  .topbar {
+    margin-bottom: 24px;
+  }
+
+  .metric-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
